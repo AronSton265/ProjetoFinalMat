@@ -45,15 +45,18 @@ def main():
     obj2.material = Material(color(0,1,0,1), "TestMaterial2")
     obj1.add_child(obj2)
 
-    # Specify the rotation of the object. It will rotate 15 degrees around the axis given, 
-    # every second
+    # Specify the rotation of the object. It will rotate when the arrow keys are pressed down
     angle = 15
-    axis = vector3(1,0.7,0.2)
-    axis.normalize()
+    axisY = vector3(0,1,0)
+    axisY.normalize()
+    axisX = vector3(1,0,0)
+    axisX.normalize()
+    axisZ = vector3(0,0,1)
+    axisZ.normalize()
 
     # Timer
-    delta_time = 0
-    prev_time = time.time()
+    #delta_time = 0
+    #prev_time = time.time()
 
     pygame.mouse.set_visible(False)
     pygame.event.set_grab(True)
@@ -69,13 +72,31 @@ def main():
             elif (event.type == pygame.KEYDOWN):
                 if (event.key == pygame.K_ESCAPE):
                     return
+                elif (event.key == pygame.K_LEFT):
+                    q = from_rotation_vector((axisY * math.radians(-(angle))).to_np3())
+                    obj1.rotation = q * obj1.rotation
+                elif (event.key == pygame.K_RIGHT):
+                    q = from_rotation_vector((axisY * math.radians(angle)).to_np3())
+                    obj1.rotation = q * obj1.rotation
+                elif (event.key == pygame.K_DOWN):
+                    q = from_rotation_vector((axisX * math.radians(angle)).to_np3())
+                    obj1.rotation = q * obj1.rotation
+                elif (event.key == pygame.K_UP):
+                    q = from_rotation_vector((axisX * math.radians(-(angle))).to_np3())
+                    obj1.rotation = q * obj1.rotation
+                elif (event.key == pygame.K_KP_PLUS):
+                    q = from_rotation_vector((axisZ * math.radians(-(angle))).to_np3())
+                    obj1.rotation = q * obj1.rotation
+                elif (event.key == pygame.K_KP_MINUS):
+                    q = from_rotation_vector((axisZ * math.radians(angle)).to_np3())
+                    obj1.rotation = q * obj1.rotation
+                else:
+                    print(event.key)
+#como o meu comutador nao tem as teclas pgup e pgdown para o trabalho as mesmas serao trocadas por + e - respetivamente do key pad
+
 
         # Clears the screen with a very dark blue (0, 0, 20)
         screen.fill((0,0,0))
-
-        # Rotates the object, considering the time passed (not linked to frame rate)
-        q = from_rotation_vector((axis * math.radians(angle) * delta_time).to_np3())
-        obj1.rotation = q * obj1.rotation
 
         scene.render(screen)
 
@@ -83,8 +104,8 @@ def main():
         pygame.display.flip()
 
         # Updates the timer, so we we know how long has it been since the last frame
-        delta_time = time.time() - prev_time
-        prev_time = time.time()
+        #delta_time = time.time() - prev_time
+        #prev_time = time.time()
 
 
 # Run the main function
