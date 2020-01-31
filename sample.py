@@ -54,6 +54,8 @@ def main():
     axisZ = vector3(0,0,1)
     axisZ.normalize()
 
+    mov = 0.2
+
     # Timer
     #delta_time = 0
     #prev_time = time.time()
@@ -90,8 +92,19 @@ def main():
                 elif (event.key == pygame.K_KP_MINUS):
                     q = from_rotation_vector((axisZ * math.radians(angle)).to_np3())
                     obj1.rotation = q * obj1.rotation
-                else:
-                    print(event.key)
+                elif (event.key == pygame.K_s):
+                    obj1.position += vector3(0, -mov, 0)
+                elif (event.key == pygame.K_w):
+                    obj1.position += vector3(0, mov, 0)
+                elif (event.key == pygame.K_a):
+                    obj1.position += vector3(-mov, 0, 0)
+                elif (event.key == pygame.K_d):
+                    obj1.position += vector3(mov, 0, 0)
+                elif (event.key == pygame.K_q):
+                    obj1.position += vector3( 0, 0, -mov)
+                elif (event.key == pygame.K_e):
+                    obj1.position += vector3( 0, 0, mov)
+
 #como o meu comutador nao tem as teclas pgup e pgdown para o trabalho as mesmas serao trocadas por + e - respetivamente do key pad
 
 
