@@ -29,19 +29,19 @@ def main():
     scene.camera.position -= vector3(0,0,2)
 
     # Create a reed polygon
-    obj1 = Object3d("TestObject")
-    obj1.scale = vector3(1, 1, 1)
-    obj1.position = vector3(0, -1, 0)
-    obj1.mesh = Mesh.create_pol((1,1,1))
-    obj1.material = Material(color(1,0,0,1), "TestMaterial1")
-    scene.add_object(obj1)
+    obj2 = Object3d("TestObject")
+    obj2.scale = vector3(0.5, 0.5, 0.5)
+    obj2.position = vector3(0, 0, 0)
+    obj2.mesh = Mesh.create_pol((1,1,1))
+    obj2.material = Material(color(1,0,0,1), "TestMaterial1")
+    scene.add_object(obj2)
 
-    # Create a green pyremid as a child of onj1
-    obj2 = Object3d("ChildObject")
-    obj2.position += vector3(0, 0.75, 0)
-    obj2.mesh = Mesh.create_pyramid((0.5, 0.5, 1))
-    obj2.material = Material(color(0,1,0,1), "TestMaterial2")
-    obj1.add_child(obj2)
+    # Create a green pyremid as a 
+    obj1 = Object3d("ChildObject")
+    obj1.position += vector3(0, 0.75, 0)
+    obj1.mesh = Mesh.create_pyramid((0.5, 0.5, 1))
+    obj1.material = Material(color(0,1,0,1), "TestMaterial2")
+    scene.add_object(obj1)
 
     # Specify the rotation of the object. It will rotate when the arrow keys are pressed down
     angle = 15
@@ -104,7 +104,7 @@ def main():
                     obj1.position += vector3( 0, 0, -mov)
                 elif (event.key == pygame.K_e):
                     obj1.position += vector3( 0, 0, mov)
-
+        scene.camera.position = obj1.position - vector3(0,0,2)
 #como o meu comutador nao tem as teclas pgup e pgdown para o trabalho as mesmas serao trocadas por + e - respetivamente do key pad
 
 

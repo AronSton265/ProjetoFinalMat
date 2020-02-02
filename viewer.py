@@ -31,7 +31,7 @@ def main():
     # Create a reed polygon
     obj1 = Object3d("TestObject")
     obj1.scale = vector3(1, 1, 1)
-    obj1.position = vector3(0, -1, 0)
+    obj1.position = vector3(0, 0, 0)
     obj1.mesh = Mesh.create_pol((1,1,1))
     obj1.material = Material(color(1,0,0,1), "TestMaterial1")
     scene.add_object(obj1)
@@ -104,7 +104,7 @@ def main():
                     obj1.position += vector3( 0, 0, -mov)
                 elif (event.key == pygame.K_e):
                     obj1.position += vector3( 0, 0, mov)
-
+        
 #como o meu comutador nao tem as teclas pgup e pgdown para o trabalho as mesmas serao trocadas por + e - respetivamente do key pad
 
 

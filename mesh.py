@@ -1,11 +1,14 @@
 import pygame
+import numpy as np
 from vector3 import *
+from quaternion import *
 import math
 
 class Mesh:
     def __init__(self, name = "UnknownMesh"):
         self.name = name
         self.polygons = []
+        self.origins = []
 
     def offset(self, v):
         new_polys = []
@@ -17,18 +20,21 @@ class Mesh:
 
         self.polygons = new_polys
 
-    def render(self, screen, matrix, material):
+    def render(self, screen, matrix, material, obj, camarapos):
         c = material.color.tuple3()        
-
+        i=-1
         for poly in self.polygons:
+            i=i+1
             tpoly = []
             for v in poly:
                 vout = v.to_np4()
                 vout = vout @ matrix
-                
                 tpoly.append( ( screen.get_width() * 0.5 + vout[0] / vout[3], screen.get_height() * 0.5 - vout[1] / vout[3]) )
 
-            pygame.draw.polygon(screen, c, tpoly, material.line_width)
+            n = vector3.cross(poly[1].__sub__(poly[0])  ,poly[2].__sub__(poly[1]))
+            v=camarapos - (obj+self.origins[i])
+            if(vector3.dot( v, n) > 0):
+                pygame.draw.polygon(screen, c, tpoly, material.line_width)
 
 
     @staticmethod
@@ -63,6 +69,7 @@ class Mesh:
         poly.append(origin - axis0 + axis1)
 
         mesh.polygons.append(poly)
+        mesh.origins.append(origin)
 
         return mesh
 
@@ -76,6 +83,8 @@ class Mesh:
         Mesh.create_tria(vector3(0, 0,  size[2] * 0.5), vector3(-size[0] * 0.5, 0), vector3(0, size[1] * 0.5, 0), vector3(0, 0, -size[2] * 0.5), mesh)
         Mesh.create_tria(vector3(0, 0, -size[2] * 0.5), vector3( size[0] * 0.5, 0), vector3(0, size[1] * 0.5, 0), vector3(0, 0, size[2] * 0.5), mesh)
 
+        Mesh.create_tria(vector3( size[0] * 0.5, 0, 0), vector3( 0, 0, -size[2] * 0.5), vector3(0, size[1] * 0.5, 0), vector3(-size[0] * 0.5, 0, 0), mesh)
+        Mesh.create_tria(vector3(-size[0] * 0.5, 0, 0), vector3( 0, 0,  size[2] * 0.5), vector3(0, size[1] * 0.5, 0), vector3( size[0] * 0.5, 0, 0), mesh)
         return mesh
 
     @staticmethod
@@ -89,6 +98,7 @@ class Mesh:
         poly.append(origin - axis0 - axis1)
 
         mesh.polygons.append(poly)
+        mesh.origins.append(origin)
 
         return mesh
     
@@ -129,5 +139,6 @@ class Mesh:
         
 
         mesh.polygons.append(poly)
+        mesh.origins.append(origin)
 
         return mesh
