@@ -30,10 +30,27 @@ class Mesh:
                 vout = v.to_np4()
                 vout = vout @ matrix
                 tpoly.append( ( screen.get_width() * 0.5 + vout[0] / vout[3], screen.get_height() * 0.5 - vout[1] / vout[3]) )
+                tpoly.append( ( screen.get_width() * 0.5 + vout[0] / vout[3], screen.get_height() * 0.5 - vout[1] / vout[3]) )
 
-            n = vector3.cross(poly[1].__sub__(poly[0])  ,poly[2].__sub__(poly[1]))
-            v=camarapos - (obj+self.origins[i])
-            if(vector3.dot( v, n) > 0):
+            ab=(poly[1].to_np4() @ obj.get_matrix())-(poly[0].to_np4() @ obj.get_matrix())
+            abvec=vector3(0,0,0)
+            abvec.x=ab[0]
+            abvec.y=ab[1]
+            abvec.z=ab[2]
+            bc=(poly[2].to_np4() @ obj.get_matrix())-(poly[1].to_np4() @ obj.get_matrix())
+            bcvec=vector3(0,0,0)
+            bcvec.x=bc[0]
+            bcvec.y=bc[1]
+            bcvec.z=bc[2]
+            n = vector3.cross(abvec, bcvec)
+            np.cross
+            centro = self.origins[i].to_np4()
+            centro = centro @ obj.get_matrix()
+            v=centro-camarapos.to_np4()
+            normal=n.to_np4()
+            
+
+            if(np.dot( v, normal) < 0.0):
                 pygame.draw.polygon(screen, c, tpoly, material.line_width)
 
 
@@ -43,21 +60,21 @@ class Mesh:
             mesh = Mesh("UnknownCube")
 
         #quadrados esquerda e direita
-        Mesh.create_quad(vector3( size[0] * 0.5, 0, 0), vector3(0, -size[1] * 0.5, 0), vector3(0, 0, size[2] * 0.5), mesh)
-        Mesh.create_quad(vector3(-size[0] * 0.5, 0, 0), vector3(0,  size[1] * 0.5, 0), vector3(0, 0, size[2] * 0.5), mesh)
+        Mesh.create_quad(vector3( size[0] * 0.5, 0, 0), vector3(0, -size[1] * 0.5, 0), vector3(0, 0, size[2] * 0.5), vector3(0,0,0), mesh)
+        Mesh.create_quad(vector3(-size[0] * 0.5, 0, 0), vector3(0,  size[1] * 0.5, 0), vector3(0, 0, size[2] * 0.5), vector3(0,0,0), mesh)
 
         #quadrados baixo e cima
-        Mesh.create_quad(vector3(0,  size[1] * 0.5, 0), vector3(size[0] * 0.5, 0), vector3(0, 0, size[2] * 0.5), mesh)
-        Mesh.create_quad(vector3(0, -size[1] * 0.5, 0), vector3(-size[0] * 0.5, 0), vector3(0, 0, size[2] * 0.5), mesh)
+        Mesh.create_quad(vector3(0,  size[1] * 0.5, 0), vector3(size[0] * 0.5, 0), vector3(0, 0, size[2] * 0.5), vector3(0,0,0), mesh)
+        Mesh.create_quad(vector3(0, -size[1] * 0.5, 0), vector3(-size[0] * 0.5, 0), vector3(0, 0, size[2] * 0.5), vector3(0,0,0), mesh)
 
         #quadrados frente e traz
-        Mesh.create_quad(vector3(0, 0,  size[2] * 0.5), vector3(-size[0] * 0.5, 0), vector3(0, size[1] * 0.5, 0), mesh)
-        Mesh.create_quad(vector3(0, 0, -size[2] * 0.5), vector3( size[0] * 0.5, 0), vector3(0, size[1] * 0.5, 0), mesh)
+        Mesh.create_quad(vector3(0, 0,  size[2] * 0.5), vector3(-size[0] * 0.5, 0), vector3(0, size[1] * 0.5, 0), vector3(0,0,0), mesh)
+        Mesh.create_quad(vector3(0, 0, -size[2] * 0.5), vector3( size[0] * 0.5, 0), vector3(0, size[1] * 0.5, 0), vector3(0,0,0), mesh)
 
         return mesh
 
     @staticmethod
-    def create_quad(origin, axis0, axis1, mesh):
+    def create_quad(origin, axis0, axis1, axis2, mesh):
         if (mesh == None):
             mesh = Mesh("UnknownQuad")
 
@@ -65,26 +82,28 @@ class Mesh:
         poly = []
         poly.append(origin + axis0 + axis1)
         poly.append(origin + axis0 - axis1)
-        poly.append(origin - axis0 - axis1)
-        poly.append(origin - axis0 + axis1)
+        poly.append(origin - axis0 - axis1 + axis2)
+        poly.append(origin - axis0 + axis1 + axis2)
 
         mesh.polygons.append(poly)
         mesh.origins.append(origin)
 
         return mesh
-
+    
     @staticmethod
     def create_pyramid(size, mesh = None):
         if (mesh == None):
             mesh = Mesh("UnknownPyramid")
 
-        Mesh.create_quad(vector3(0, -size[1] * 0.5, 0), vector3(-size[0] * 0.5, 0), vector3(0, 0, size[2] * 0.5), mesh)
+        Mesh.create_quad(vector3(0, -size[1] * 0.5, 0), vector3(-size[0] * 0.5, 0), vector3(0, 0, size[2] * 0.5), vector3(0,0,0), mesh)
 
+        #traz/frente
         Mesh.create_tria(vector3(0, 0,  size[2] * 0.5), vector3(-size[0] * 0.5, 0), vector3(0, size[1] * 0.5, 0), vector3(0, 0, -size[2] * 0.5), mesh)
         Mesh.create_tria(vector3(0, 0, -size[2] * 0.5), vector3( size[0] * 0.5, 0), vector3(0, size[1] * 0.5, 0), vector3(0, 0, size[2] * 0.5), mesh)
 
-        Mesh.create_tria(vector3( size[0] * 0.5, 0, 0), vector3( 0, 0, -size[2] * 0.5), vector3(0, size[1] * 0.5, 0), vector3(-size[0] * 0.5, 0, 0), mesh)
-        Mesh.create_tria(vector3(-size[0] * 0.5, 0, 0), vector3( 0, 0,  size[2] * 0.5), vector3(0, size[1] * 0.5, 0), vector3( size[0] * 0.5, 0, 0), mesh)
+        #direita/esquerda
+        Mesh.create_tria(vector3( size[0] * 0.5, 0, 0), vector3( 0, 0,  size[2] * 0.5), vector3(0, size[1] * 0.5, 0), vector3(-size[0] * 0.5, 0, 0), mesh)
+        Mesh.create_tria(vector3(-size[0] * 0.5, 0, 0), vector3( 0, 0, -size[2] * 0.5), vector3(0, size[1] * 0.5, 0), vector3( size[0] * 0.5, 0, 0), mesh)
         return mesh
 
     @staticmethod
@@ -101,19 +120,26 @@ class Mesh:
         mesh.origins.append(origin)
 
         return mesh
+
     
     @staticmethod
     def create_pol(size, mesh = None):
         if (mesh == None):
             mesh = Mesh("UnknownPol")
 
-        #quadrados esquerda e direita
-        Mesh.create_quad(vector3( size[0] * 0.5, 0, 0), vector3(0, -size[1] * 0.25, 0), vector3(0, 0, size[2] * 0.5), mesh)
-        Mesh.create_quad(vector3(-size[0] * 0.5, 0, 0), vector3(0,  size[1] * 0.25, 0), vector3(0, 0, size[2] * 0.5), mesh)
+        #quadrados direita
+        Mesh.create_quad(vector3( size[0] * 0.5, 0, 0), vector3(0, -size[1] * 0.25, 0), vector3(0, 0, size[2] * 0.5), vector3(0,0,0), mesh)
+        Mesh.create_quad(vector3( size[0] * 0.25, size[1] * 0.40, 0), vector3(0, size[1] * 0.125, 0), vector3(0, 0, -size[2] * 0.5), vector3(size[0] * 0.25,0,0), mesh)
+        Mesh.create_quad(vector3( size[0] * 0.5, -size[1] * 0.40, 0),vector3(0, size[1] * 0.125, 0), vector3(0, 0, -size[2] * 0.5), vector3(-size[0] * 0.25,0,0), mesh)
+
+        #quadrados esquerda
+        Mesh.create_quad(vector3(-size[0] * 0.5, 0, 0), vector3(0,  size[1] * 0.25, 0), vector3(0, 0, size[2] * 0.5), vector3(0,0,0), mesh)
+        Mesh.create_quad(vector3(-size[0] * 0.25, size[1] * 0.40, 0), vector3(0, size[1] * 0.125, 0), vector3(0, 0, size[2] * 0.5), vector3(-size[0] * 0.25,0,0),mesh)
+        Mesh.create_quad(vector3(-size[0] * 0.5, -size[1] * 0.40, 0), vector3(0, size[1] * 0.125, 0), vector3(0, 0, size[2] * 0.5), vector3(size[0] * 0.25,0,0),mesh)
 
         #quadrados baixo e cima
-        Mesh.create_quad(vector3(0,  size[1] * 0.5, 0), vector3(size[0] * 0.25, 0), vector3(0, 0, size[2] * 0.5), mesh)
-        Mesh.create_quad(vector3(0, -size[1] * 0.5, 0), vector3(-size[0] * 0.25, 0), vector3(0, 0, size[2] * 0.5), mesh)
+        Mesh.create_quad(vector3(0,  size[1] * 0.5, 0), vector3(size[0] * 0.25, 0), vector3(0, 0, size[2] * 0.5), vector3(0,0,0), mesh)
+        Mesh.create_quad(vector3(0, -size[1] * 0.5, 0), vector3(-size[0] * 0.25, 0), vector3(0, 0, size[2] * 0.5), vector3(0,0,0), mesh)
 
         #quadrados frente e traz
         Mesh.create_hex(vector3(0, 0,  size[2] * 0.5), vector3(-size[0] * 0.5, 0), vector3(0, size[1] * 0.5, 0), mesh)

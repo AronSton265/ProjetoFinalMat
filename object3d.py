@@ -20,7 +20,7 @@ class Object3d:
         
         mesh_matrix = world_matrix @ clip_matrix
         if ((self.material != None) and (self.mesh)):
-            self.mesh.render(screen, mesh_matrix, self.material, self.position, poscamara)
+            self.mesh.render(screen, mesh_matrix, self.material, self, poscamara)
 
         for child in self.children:
             child.render(screen, mesh_matrix, poscamara)

@@ -104,7 +104,8 @@ def main():
                     obj1.position += vector3( 0, 0, -mov)
                 elif (event.key == pygame.K_e):
                     obj1.position += vector3( 0, 0, mov)
-        scene.camera.position = obj1.position - vector3(0,0,2)
+        scene.camera.position = obj1.position - vector3(0,-0.5,2)
+
 #como o meu comutador nao tem as teclas pgup e pgdown para o trabalho as mesmas serao trocadas por + e - respetivamente do key pad
 
 
