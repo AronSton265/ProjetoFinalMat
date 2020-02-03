@@ -15,12 +15,12 @@ class Object3d:
     def get_matrix(self):
         return Object3d.get_prs_matrix(self.position, self.rotation, self.scale)
 
-    def render(self, screen, clip_matrix, poscamara):
+    def render(self, screen, clip_matrix, poscamara, light):
         world_matrix = self.get_matrix()
         
         mesh_matrix = world_matrix @ clip_matrix
         if ((self.material != None) and (self.mesh)):
-            self.mesh.render(screen, mesh_matrix, self.material, self, poscamara)
+            self.mesh.render(screen, mesh_matrix, self.material, self, poscamara, light)
 
         for child in self.children:
             child.render(screen, mesh_matrix, poscamara)

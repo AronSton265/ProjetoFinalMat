@@ -22,7 +22,7 @@ def main():
     screen = pygame.display.set_mode((res_x, res_y))
 
     # Create a scene
-    scene = Scene("TestScene")
+    scene = Scene("ViwerScene")
     scene.camera = Camera(False, res_x, res_y)
 
     # Moves the camera back 2 units

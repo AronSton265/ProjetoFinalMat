@@ -20,14 +20,16 @@ class Mesh:
 
         self.polygons = new_polys
 
-    def render(self, screen, matrix, material, obj, camarapos):
-        c = material.color.tuple3()        
+    def render(self, screen, matrix, material, obj, camarapos, light):        
         i=-1
         for poly in self.polygons:
             i=i+1
             tpoly = []
             for v in poly:
-                vout = v.to_np4()
+                vtemp = v + vector3(0,0,0)
+                if(vtemp.z<camarapos.z):
+                    vtemp.z=camarapos.z
+                vout=vtemp.to_np4()
                 vout = vout @ matrix
                 tpoly.append( ( screen.get_width() * 0.5 + vout[0] / vout[3], screen.get_height() * 0.5 - vout[1] / vout[3]) )
                 tpoly.append( ( screen.get_width() * 0.5 + vout[0] / vout[3], screen.get_height() * 0.5 - vout[1] / vout[3]) )
@@ -51,7 +53,14 @@ class Mesh:
             
 
             if(np.dot( v, normal) < 0.0):
-                pygame.draw.polygon(screen, c, tpoly, material.line_width)
+                if(centro[2] >= camarapos.z):
+                    l= centro - light.to_np4()
+                    li_intensity=max(0.05,-np.dot(l, normal))
+                    li_intensity=min(li_intensity, 1)
+                    cpoly=material.color
+                    cpoly = cpoly.__mul__(li_intensity)
+                    c = cpoly.tuple3()
+                    pygame.draw.polygon(screen, c, tpoly, material.line_width)
 
 
     @staticmethod
