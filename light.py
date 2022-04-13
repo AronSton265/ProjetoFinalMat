@@ -1,7 +1,7 @@
 import pygame
 import numpy as np
 from vector3 import *
-from quaternion import *
+from Quaternion import *
 import math
 
 class Light:
